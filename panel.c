@@ -9,6 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <pthread.h>
+
+/// ===========================================================================
+/// Mutex
+/// ===========================================================================
+
+pthread_mutex_t printMutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 /// ===========================================================================
 /// Static function definitions
@@ -47,6 +55,9 @@ Panel createPanel(const size_t position, const size_t width)
 
 void pprintf(Panel p, const char* format, ...)
 {
+	// thread safety
+	pthread_mutex_lock(&printMutex);
+
     va_list args;
     int length;
     static char getLengthArray[0];
@@ -90,4 +101,6 @@ void pprintf(Panel p, const char* format, ...)
 
 	fflush(stdout);
 	va_end(args);
+
+	pthread_mutex_unlock(&printMutex);
 }

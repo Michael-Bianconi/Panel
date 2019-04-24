@@ -1,8 +1,12 @@
 # Panels
 
-Panels is a C utility that allows developers to split their
+Panels is a thread-safe C utility that allows developers to split their
 terminal output into columns. Output can be asynchronously
 displayed side-by-side.
+
+## Build
+
+    $ gcc panel.c -lpthread
 
 ## Usage
 

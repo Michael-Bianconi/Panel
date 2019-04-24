@@ -60,7 +60,7 @@ void pprintf(Panel p, const char* format, ...)
 
     va_list args;
     int length;
-    static char getLengthArray[0];
+    static char getLengthArray[1];
 
     // Get length of the string
     va_start(args, format);
@@ -69,10 +69,10 @@ void pprintf(Panel p, const char* format, ...)
 
     // Copy the string into the buffer
     va_start(args, format);
-    char line[length+2];
+    char line[length+1];
 	vsprintf(line, format, args);
 
-
+	// Initialize cursor position
 	int n = 0;
 	setCursorPosition(p->row, p->col+p->position+1);
 

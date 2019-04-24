@@ -10,25 +10,97 @@ displayed side-by-side.
 
 ## Usage
 
+### Test file
+
     #include "panel.h"
-    #define LEFT_PANEL 0	// Left panel starts at the far left
-    #define RIGHT_PANEL 31  // Right panel starts at the 31st column
-    #define PANEL_WIDTH 30	// Both panels are 30 characters wide
+    #include <stdio.h>
+    #include <pthread.h>
+    #include <unistd.h>
 
-    clearTerminal(); // Clear the terminal to get right of previous output
+    #define LEFT_PANEL 0    // Left panel starts at the far left
+    #define MIDDLE_PANEL 31 // Middle panel starts at the 31st column
+    #define RIGHT_PANEL 62  // Right panel starts at the 62nd column
+    #define PANEL_WIDTH 30  // All panels are 30 characters wide
 
-    Panel left = createPanel(LEFT_PANEL, PANEL_WIDTH);
-    Panel right = createPanel(RIGHT_PANEL, PANEL_WIDTH);
+    // Holds arguments to pass to run()
+    struct args
+    {
+        Panel panel;
+        char* out;
+        int delay;
+    };
 
-    char* vararg = "right";
+    // Prints out the given string after a delay, 100 times
+    static void* run(void* args_v)
+    {
+        struct args* _args = (struct args*) args_v;
 
-    pprintf(left, "This is the left panel!");
-    pprintf(right, "Let's print 'right': %s!", vararg);
+        for (int d = 0; d < 100; d++)
+        {
+            usleep(_args->delay);
+            pprintf(_args->panel, _args->out);
+        }
 
-    printf("\n"); // Reset the command prompt
+        return NULL;
+    }
 
-    free(left);
-    free(right);
+    int main(int argc, char** argv)
+    {
+        (void) argc;
+        (void) argv;
+
+        clearTerminal();
+
+        // Create 3 panels and 3 threads that will run side by side
+        Panel left = createPanel(LEFT_PANEL, PANEL_WIDTH);
+        Panel middle = createPanel(MIDDLE_PANEL, PANEL_WIDTH);
+        Panel right = createPanel(RIGHT_PANEL, PANEL_WIDTH);
+
+        pthread_t lthread;
+        pthread_t mthread;
+        pthread_t rthread;
+
+        struct args largs = {left, "(a)", 100000};
+        struct args margs = {middle, "(bb)", 110000};
+        struct args rargs = {right, "(ccc)", 120000};
+
+        pthread_create(&lthread, NULL, &run, (void*) &largs);
+        pthread_create(&mthread, NULL, &run, (void*) &margs);
+        pthread_create(&rthread, NULL, &run, (void*) &rargs);
+
+        pthread_join(lthread, NULL);
+        pthread_join(mthread, NULL);
+        pthread_join(rthread, NULL);
+
+        free(left);
+        free(middle);
+        free(right);
+
+        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
+        return 0;
+    }
+
+### Output
+
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+    (a)(a)(a)(a)(a)(a)(a)(a)(a)(a) b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                   (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                   b)(bb)(bb)(bb)(bb)(bb)(bb)(bb) (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                   (bb)(bb)(bb)(bb)(bb)(bb)(bb)(b (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                   b)(bb)(bb)                     (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                                                  (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                                                  (ccc)(ccc)(ccc)(ccc)(ccc)(ccc)
+                                                                  (ccc)(ccc)(ccc)(ccc)
+
 
 ## Functions
 

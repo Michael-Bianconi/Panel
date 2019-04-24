@@ -1,9 +1,6 @@
 /**
  * @author Michael Bianconi
  * @since 04-23-2019
- *
- * PanelView is a framework that allows developers to display
- * multiple "streams" to stdout, side by side.
  */
 
 #ifndef PANEL_H
@@ -18,9 +15,9 @@
 struct Panel_s
 {
 	size_t position; // starting column
-	size_t width; // text will not exceed this value
-	size_t row;
-	size_t col;
+	size_t width; // number of characters that can be printed before '\n'
+	size_t row; // current row
+	size_t col; // current col
 };
 
 /// ===========================================================================
@@ -53,7 +50,7 @@ Panel createPanel(const size_t pos, const size_t width);
 
 
 /**
- * Prints to the given panel. Has the same format at printf().
+ * Prints to the given panel. Has the same format as printf().
  * A newline will be inserted if the string exceeds the width
  * of the panel.
  *

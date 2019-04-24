@@ -28,33 +28,29 @@ displayed side-by-side.
 
 ## Functions
 
-#### void clearTerminal()
+### void clearTerminal()
 
 Clears all previous input from the terminal and sets the cursor to the
 top left. Should be called <i>once</i> before printing to panels.
 
-    clearTerminal();
-
-#### Panel createPanel(size_t position, size_t width)
+### Panel createPanel(size_t position, size_t width)
 
 Allocates memory for a new Panel and sets its attributes. Remember to free()!
 
-<b>position:</b> Index of the panel's leftmost column in the terminal.
+<i>position:</i> Index of the panel's leftmost column in the terminal.
 
-<b>width</b> Number of characters to print to the panel before inserting
+<i>width:</i> Number of characters to print to the panel before inserting
 a new line.
 
-<b>return:</b> Returns a malloc'd Panel.
+<i>return:</i> Returns a malloc'd Panel.
 
-#### void pprintf(Panel panel, const char* format, ...)
+### void pprintf(Panel panel, const char* format, ...)
 
 Prints to the given panel. Output will not exceed the
 width of the panel. If it does, a newline is inserted.
 
-<b>panel</b> Panel to print to.
+<i>panel:</i> Panel to print to.
 
-<b>format</b> Output to print, can be formatted with var args.
+<i>format:</i> Output to print, can be formatted with var args.
 
-<b>var args</b> Formats given string.
-
-
+<i>var args:</i> Formats given string.
